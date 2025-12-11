@@ -1,14 +1,15 @@
-using Application.Features.Orders.Commands.RemoveItemOrder.Dtos;
 using FluentValidation;
 
 namespace Application.Features.Orders.Commands.RemoveItemOrder
 {
-    public class RemoveItemOrderCommandValidator : AbstractValidator<RemoveItemOrderRequest>
+    public class RemoveItemOrderCommandValidator : AbstractValidator<RemoveItemOrderCommand>
     {
         public RemoveItemOrderCommandValidator()
         {
-            RuleFor(x => x.OrderId).NotEmpty();
-            RuleFor(x => x.ItemId).NotEmpty();
+            RuleFor(x => x.CustomerId).NotEmpty();
+            RuleFor(x => x.Request).NotNull();
+            RuleFor(x => x.Request.OrderId).NotEmpty().When(x => x.Request != null);
+            RuleFor(x => x.Request.ItemId).NotEmpty().When(x => x.Request != null);
         }
     }
 }

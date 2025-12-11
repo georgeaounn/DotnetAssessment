@@ -1,16 +1,16 @@
-using Application.Features.Orders.Commands.CreateOrder.Dtos;
 using FluentValidation;
 
 namespace Application.Features.Orders.Commands.CreateOrder
 {
-    public class CreateOrderCommandValidator : AbstractValidator<CreateOrderRequest>
+    public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
     {
         public CreateOrderCommandValidator()
         {
-            RuleFor(x => x.Items).NotEmpty();
+            RuleFor(x => x.CustomerId).NotEmpty();
+            RuleFor(x => x.Items).NotEmpty().WithMessage("Order must contain at least one item");
             RuleForEach(x => x.Items).ChildRules(items =>
             {
-                items.RuleFor(i => i.ItemId).NotEmpty();
+                items.RuleFor(i => i.ItemId).NotEmpty().WithMessage("ItemId is required");
             });
         }
     }

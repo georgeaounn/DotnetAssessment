@@ -1,4 +1,5 @@
 using Application.Abstractions.CQRS;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure.CQRS
@@ -12,11 +13,27 @@ namespace Infrastructure.CQRS
             _sp = sp;
         }
 
-        public Task<TResult> Dispatch<TResult>(IQuery<TResult> query, CancellationToken ct = default)
+        public async Task<TResult> Dispatch<TResult>(IQuery<TResult> query, CancellationToken ct = default)
         {
+            // Validate query
+            var validatorType = typeof(IValidator<>).MakeGenericType(query.GetType());
+            var validator = _sp.GetService(validatorType);
+            
+            if (validator != null)
+            {
+                var validationContext = new ValidationContext<object>(query);
+                var validationResult = await ((IValidator)validator).ValidateAsync(validationContext, ct);
+                
+                if (!validationResult.IsValid)
+                {
+                    throw new ValidationException(validationResult.Errors);
+                }
+            }
+
+            // Dispatch to handler
             var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
             dynamic handler = _sp.GetRequiredService(handlerType);
-            return handler.Handle((dynamic)query, ct);
+            return await handler.Handle((dynamic)query, ct);
         }
     }
 

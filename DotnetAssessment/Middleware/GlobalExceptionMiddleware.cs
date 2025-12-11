@@ -1,5 +1,8 @@
 
 using Application.Abstractions.Services;
+using Application.Common;
+using FluentValidation;
+using System.Linq;
 
 namespace DotnetAssessment.Middleware
 {
@@ -21,12 +24,21 @@ namespace DotnetAssessment.Middleware
             {
                 await _next(context);
             }
+            catch (ValidationException ex)
+            {
+                context.Response.StatusCode = 400;
+                context.Response.ContentType = "application/json";
+                var errorMessages = ex.Errors.Select(e => e.ErrorMessage).ToList();
+                var result = Result.Failure(errorMessages);
+                await context.Response.WriteAsJsonAsync(result);
+            }
             catch (Exception ex)
             {
                 await _logger.LogErrorAsync(ex, context.Request.Path, CancellationToken.None);
                 context.Response.StatusCode = 500;
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsJsonAsync(new { error = "An unexpected error occurred." });
+                var result = Result.Failure("An unexpected error occurred.");
+                await context.Response.WriteAsJsonAsync(result);
             }
         }
     }

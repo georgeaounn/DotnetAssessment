@@ -1,14 +1,14 @@
-using Application.Features.Auth.Commands.Login.Dtos;
 using FluentValidation;
 
 namespace Application.Features.Auth.Commands.Login
 {
-    public class LoginUserRequestValidator : AbstractValidator<LoginRequest>
+    public class LoginCommandValidator : AbstractValidator<LoginCommand>
     {
-        public LoginUserRequestValidator()
+        public LoginCommandValidator()
         {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.Password).NotEmpty();
+            RuleFor(x => x.Request).NotNull();
+            RuleFor(x => x.Request.Email).NotEmpty().EmailAddress().When(x => x.Request != null).WithMessage("Valid email is required");
+            RuleFor(x => x.Request.Password).NotEmpty().When(x => x.Request != null).WithMessage("Password is required");
         }
     }
 
