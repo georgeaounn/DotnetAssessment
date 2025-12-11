@@ -34,5 +34,24 @@ namespace Infrastructure.Persistence.Repositories
                 .ThenInclude(oi => oi.Item)
                 .Where(o => o.CustomerId == userId)
                 .ToListAsync(ct);
+
+        public async Task DeleteAsync(Guid OrderId, CancellationToken ct)
+        {
+            await _db.Orders
+                .Where(x => x.Id == OrderId)
+                .ExecuteDeleteAsync(ct);
+        }
+
+        public async Task AddItemOrderAsync(Order order, Item item, CancellationToken ct)
+        {
+            order.AddItem(item.Id, item.Product.BasePrice);
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task RemoveItemOrderAsync(Order order, OrderItem item, CancellationToken ct)
+        {
+            order.RemoveItem(item);
+            await _db.SaveChangesAsync();
+        }
     }
 }

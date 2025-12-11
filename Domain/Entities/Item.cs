@@ -11,6 +11,6 @@ namespace Domain.Entities
         public Guid ProductId { get; set; }
         public byte[] RowVersion { get; set; } = Array.Empty<byte>();
         public bool IsSold { get; set; } = false;
-        public Product Product { get; set; } = new Product();
+        public Product Product { get; set; }
     }
 }

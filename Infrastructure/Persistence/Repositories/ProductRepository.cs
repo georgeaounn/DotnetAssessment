@@ -39,7 +39,7 @@ namespace Infrastructure.Persistence.Repositories
 
             int Total = await Query.CountAsync();
 
-            return (await Query.OrderBy(i => i.Name).ToListAsync(ct), Total);
+            return (await Query.OrderBy(i => i.Name).Skip(Request.PageSize * (Request.PageNumber - 1)).Take(Request.PageSize).ToListAsync(ct), Total);
         }
     }
 

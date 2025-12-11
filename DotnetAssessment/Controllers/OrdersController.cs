@@ -3,8 +3,13 @@
 using Application.Abstractions.CQRS;
 using Application.Abstractions.Services;
 using Application.Common;
+using Application.Features.Orders.Commands.AddItemOrder;
+using Application.Features.Orders.Commands.AddItemOrder.Dtos;
 using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Commands.CreateOrder.Dtos;
+using Application.Features.Orders.Commands.DeleteOrder;
+using Application.Features.Orders.Commands.RemoveItemOrder;
+using Application.Features.Orders.Commands.RemoveItemOrder.Dtos;
 using Application.Features.Orders.Dtos;
 using Application.Features.Orders.Queries.GetOrderById;
 using Application.Features.Orders.Queries.GetUserOrders;
@@ -42,7 +47,7 @@ namespace DotnetAssessment.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Result<OrderDto>>> GetById(Guid id, CancellationToken ct)
+        public async Task<ActionResult<Result<OrderDto>>> GetById([FromRoute] Guid id, CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetOrderByIdQuery(id), ct);
             if (result.IsFailure) 
@@ -54,6 +59,37 @@ namespace DotnetAssessment.Controllers
         public async Task<ActionResult<List<OrderDto>>> GetMyOrders(CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetUserOrdersQuery(_currentUser.UserId), ct);
+            return Ok(result);
+        }
+
+        [HttpPut("AddItemOrder")]
+        public async Task<ActionResult<List<OrderDto>>> AddItemOrder( AddItemOrderRequest Request ,CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new AddItemOrderCommand(_currentUser.UserId, Request), ct);
+            if(result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpPut("RemoveItemOrder")]
+        public async Task<ActionResult<List<OrderDto>>> RemoveItemOrder(RemoveItemOrderRequest Request, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new RemoveItemOrderCommand(_currentUser.UserId, Request), ct);
+            if (result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+
+        [HttpDelete("{id:guid}")]
+        public async Task<ActionResult<List<OrderDto>>> Delete([FromRoute] Guid id, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new DeleteOrderCommand(_currentUser.UserId, id), ct);
+            if (result.IsFailure)
+                return BadRequest(result);
+
             return Ok(result);
         }
 

@@ -24,7 +24,7 @@ namespace Infrastructure.Persistence.Repositories
         public async Task<List<Item>> GetByIdsAsync(List<Guid> ids, CancellationToken ct)
         {
             var list = ids.ToList();
-            return await _db.Items.Where(i => list.Contains(i.Id)).ToListAsync(ct);
+            return await _db.Items.Where(i => list.Contains(i.Id)).Include(u => u.Product).ToListAsync(ct);
         }
 
         public async Task<(List<Item>, int Total)> GetPaginatedAsync(GetAllItemsRequest Request, CancellationToken ct)
@@ -37,7 +37,7 @@ namespace Infrastructure.Persistence.Repositories
 
             int Total = await Query.CountAsync();
 
-            return (await Query.OrderBy(i => i.Name).ToListAsync(ct), Total);
+            return (await Query.OrderBy(i => i.Name).Skip(Request.PageSize * (Request.PageNumber - 1)).Take(Request.PageSize).ToListAsync(ct), Total);
         }
 
 
@@ -47,12 +47,16 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task UpdateItemStatus(List<Guid> ids, bool status, CancellationToken ct)
         {
-            await _db.Items
+            var items = await _db.Items
                 .Where(i => ids.Contains(i.Id))
-                .ExecuteUpdateAsync(
-                    setter => setter
-                        .SetProperty(i => i.IsSold, it => status),
-                    ct);
+                .ToListAsync(ct);
+
+            foreach (var item in items)
+            {
+                item.IsSold = status;
+            }
+
+            await _db.SaveChangesAsync(ct);
         }
     }
 

@@ -12,7 +12,7 @@ namespace Domain.Entities
         public Guid Id { get; set; }
         [Required]
         public Guid CustomerId { get; set; }
-        public User Customer { get; set; } = new User();
+        public User Customer { get; set; }
         public DateTime CreatedAt { get; set; }
         [Required, Range(0, double.MaxValue)]
         public decimal TotalPrice { get; set; }
@@ -22,7 +22,13 @@ namespace Domain.Entities
 
         public void AddItem(Guid itemId, decimal unitPrice)
         {
-            _items.Add(new OrderItem() { Id = Id, ItemId = itemId, UnitPrice =  unitPrice });
+            _items.Add(new OrderItem() { ItemId = itemId, UnitPrice =  unitPrice });
+            RecalculateTotal();
+        }
+
+        public void RemoveItem(OrderItem orderItem)
+        {
+            _items.Remove(orderItem);
             RecalculateTotal();
         }
 

@@ -39,7 +39,7 @@ namespace Application.Features.Items.Commands.CreateItem
             if(product is null)
                 return Result<ItemDto>.Failure($"Product with id {command.Request.ProductId} not found");
 
-            var item = new Item() { Id = product.Id, Name = command.Request.Name};
+            var item = new Item() { ProductId = product.Id, Name = command.Request.Name};
             await _items.AddAsync(item, ct);
 
             await _audit.RecordAsync("CreateItem", nameof(Item), item.Id.ToString(), _currentUser.UserId, ct);

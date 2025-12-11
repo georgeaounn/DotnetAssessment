@@ -8,8 +8,8 @@ namespace Application.Common
 {
     public class PaginationRequest
     {
-        public int PageNumber { get; private set; } = 1;
-        public int PageSize { get; private set; } = 10;
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
 
         public PaginationRequest() { }
 

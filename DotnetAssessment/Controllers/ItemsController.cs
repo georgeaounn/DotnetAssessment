@@ -26,7 +26,7 @@ namespace DotnetAssessment.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<Result<PaginationResult<ItemDto>>>> GetAll(GetAllItemsRequest Request, CancellationToken ct)
+        public async Task<ActionResult<Result<PaginationResult<ItemDto>>>> GetAll([FromQuery] GetAllItemsRequest Request, CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetAllItemsQuery(Request), ct);
 
@@ -38,7 +38,7 @@ namespace DotnetAssessment.Controllers
 
         [HttpGet("{id:guid}")]
         [Authorize]
-        public async Task<ActionResult<Result<ItemDto>>> GetById(Guid id, CancellationToken ct)
+        public async Task<ActionResult<Result<ItemDto>>> GetById([FromRoute] Guid id, CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetItemByIdQuery(id), ct);
 
