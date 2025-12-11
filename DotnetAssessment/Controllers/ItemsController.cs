@@ -2,6 +2,9 @@ using Application.Abstractions.CQRS;
 using Application.Common;
 using Application.Features.Items.Commands.CreateItem;
 using Application.Features.Items.Commands.CreateItem.Dtos;
+using Application.Features.Items.Commands.DeleteItem;
+using Application.Features.Items.Commands.UpdateItem;
+using Application.Features.Items.Commands.UpdateItem.Dtos;
 using Application.Features.Items.Dtos;
 using Application.Features.Items.Queries.GetAllItems;
 using Application.Features.Items.Queries.GetAllItems.Dtos;
@@ -53,6 +56,26 @@ namespace DotnetAssessment.Controllers
         public async Task<ActionResult<Result<ItemDto>>> Create([FromBody] CreateItemRequest Request, CancellationToken ct)
         {
             var result = await _commands.Dispatch(new CreateItemCommand(Request), ct);
+            if (result.IsFailure)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPut]
+        [Authorize(Policy = "SuperAdminOnly")]
+        public async Task<ActionResult<Result<ItemDto>>> Update([FromBody] UpdateItemRequest Request, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new UpdateItemCommand(Request), ct);
+            if (result.IsFailure)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "SuperAdminOnly")]
+        public async Task<ActionResult<Result>> Delete([FromRoute] Guid id, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new DeleteItemCommand(id), ct);
             if (result.IsFailure)
                 return BadRequest(result);
             return Ok(result);

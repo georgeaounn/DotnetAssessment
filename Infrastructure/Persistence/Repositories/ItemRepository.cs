@@ -35,6 +35,10 @@ namespace Infrastructure.Persistence.Repositories
             if(!string.IsNullOrWhiteSpace(Request.Search))
                 Query = Query.Where(i => i.Name.Contains(Request.Search));
 
+            // Filter by IsSold
+            if (Request.IsSold.HasValue)
+                Query = Query.Where(i => i.IsSold == Request.IsSold.Value);
+
             int Total = await Query.CountAsync();
 
             return (await Query.OrderBy(i => i.Name).Skip(Request.PageSize * (Request.PageNumber - 1)).Take(Request.PageSize).ToListAsync(ct), Total);
@@ -57,6 +61,24 @@ namespace Infrastructure.Persistence.Repositories
             }
 
             await _db.SaveChangesAsync(ct);
+        }
+
+        public async Task UpdateAsync(Item item, CancellationToken ct)
+        {
+            _db.Items.Update(item);
+            await _db.SaveChangesAsync(ct);
+        }
+
+        public async Task DeleteAsync(Item item, CancellationToken ct)
+        {
+            _db.Items.Remove(item);
+            await _db.SaveChangesAsync(ct);
+        }
+
+        public async Task<bool> HasSoldItemsByProductIdAsync(Guid productId, CancellationToken ct)
+        {
+            return await _db.Items
+                .AnyAsync(i => i.ProductId == productId && i.IsSold == true, ct);
         }
     }
 

@@ -1,23 +1,19 @@
-
 using Application.Abstractions.CQRS;
 using Application.Abstractions.Persistence;
 using Application.Abstractions.Services;
 using Application.Common;
 using Application.Features.Items.Dtos;
-using Domain.Entities;
-using System.Reflection.Metadata.Ecma335;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Application.Features.Items.Commands.CreateItem
+namespace Application.Features.Items.Commands.UpdateItem
 {
-    public class CreateItemCommandHandler : ICommandHandler<CreateItemCommand, Result<ItemDto>>
+    public class UpdateItemCommandHandler : ICommandHandler<UpdateItemCommand, Result<ItemDto>>
     {
         private readonly IItemRepository _items;
         private readonly IProductRepository _products;
         private readonly ICurrentUser _currentUser;
         private readonly IAuditService _audit;
 
-        public CreateItemCommandHandler(
+        public UpdateItemCommandHandler(
             IItemRepository items,
             IProductRepository products,
             ICurrentUser currentUser,
@@ -29,23 +25,28 @@ namespace Application.Features.Items.Commands.CreateItem
             _audit = audit;
         }
 
-        public async Task<Result<ItemDto>> Handle(CreateItemCommand command, CancellationToken ct = default)
+        public async Task<Result<ItemDto>> Handle(UpdateItemCommand command, CancellationToken ct = default)
         {
             if (!_currentUser.IsSuperAdmin)
-                throw new UnauthorizedAccessException("Only SuperAdmins can create items");
+                throw new UnauthorizedAccessException("Only SuperAdmins can update items");
+
+            var item = await _items.GetByIdAsync(command.Request.ItemId, ct);
+            if (item is null)
+                return Result<ItemDto>.Failure("Item not found");
 
             var product = await _products.GetByIdAsync(command.Request.ProductId, ct);
+            if (product is null)
+                return Result<ItemDto>.Failure("Product not found");
 
-            if(product is null)
-                return Result<ItemDto>.Failure($"Product with id {command.Request.ProductId} not found");
+            item.Name = command.Request.Name;
+            item.ProductId = command.Request.ProductId;
 
-            var item = new Item() { ProductId = product.Id, Name = command.Request.Name};
-            await _items.AddAsync(item, ct);
+            await _items.UpdateAsync(item, ct);
 
-            await _audit.RecordAsync("CreateItem", nameof(Item), item.Id.ToString(), _currentUser.UserId, ct);
+            await _audit.RecordAsync("UpdateItem", nameof(Domain.Entities.Item), item.Id.ToString(), _currentUser.UserId, ct);
 
             return Result<ItemDto>.Success(new ItemDto(item.Id, item.Name, item.ProductId, item.IsSold));
         }
     }
-
 }
+

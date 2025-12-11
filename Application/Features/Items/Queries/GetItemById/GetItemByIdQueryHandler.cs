@@ -21,7 +21,7 @@ namespace Application.Features.Items.Queries.GetItemById
             if (item is null) 
                 return Result<ItemDto?>.Failure("Invalid item id");
 
-            return Result<ItemDto?>.Success(new ItemDto(item.Id, item.Name, item.ProductId));
+            return Result<ItemDto?>.Success(new ItemDto(item.Id, item.Name, item.ProductId, item.IsSold));
         }
     }
 

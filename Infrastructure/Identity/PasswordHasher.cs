@@ -17,7 +17,7 @@ namespace Infrastructure.Identity
         public bool Verify(string password, string hash)
         {
             var passwordHasher = new PasswordHasher<string>();
-            return passwordHasher.VerifyHashedPassword(null, hash, password) == PasswordVerificationResult.Success;
+            return passwordHasher.VerifyHashedPassword(null!, hash, password) == PasswordVerificationResult.Success;
         }
     }
 }

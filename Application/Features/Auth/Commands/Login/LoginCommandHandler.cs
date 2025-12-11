@@ -35,8 +35,13 @@ namespace Application.Features.Auth.Commands.Login
                 return Result<LoginResponse>.Failure("Invalid email or password");
 
             var token = _jwtTokenService.GenerateToken(user.Id, user.Email, user.RoleId);
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user, ct);
 
-            return Result<LoginResponse>.Success(new LoginResponse(token, user.Id, user.Email, user.Role.Name));
+            return Result<LoginResponse>.Success(new LoginResponse(token, refreshToken, user.Id, user.Email, user.Role.Name));
         }
     }
 }

@@ -2,6 +2,9 @@ using Application.Abstractions.CQRS;
 using Application.Common;
 using Application.Features.Products.Commands.CreateProduct;
 using Application.Features.Products.Commands.CreateProduct.Dtos;
+using Application.Features.Products.Commands.DeleteProduct;
+using Application.Features.Products.Commands.UpdateProduct;
+using Application.Features.Products.Commands.UpdateProduct.Dtos;
 using Application.Features.Products.Dtos;
 using Application.Features.Products.Queries.GetAllProducts;
 using Application.Features.Products.Queries.GetAllProducts.Dtos;
@@ -59,5 +62,29 @@ namespace DotnetAssessment.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("{id:guid}")]
+        [Authorize(Policy = "SuperAdminOnly")]
+        public async Task<ActionResult<Result<ProductDto>>> Update([FromRoute] Guid id, [FromBody] UpdateProductRequest request, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(
+                new UpdateProductCommand(id, request.Name, request.BasePrice, request.IsActive), ct);
+            if(result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "SuperAdminOnly")]
+        public async Task<ActionResult<Result>> Delete([FromRoute] Guid id, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new DeleteProductCommand(id), ct);
+            if(result.IsFailure)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
     }
+
 }

@@ -1,8 +1,10 @@
 
 using Application.Abstractions.CQRS;
+using Application.Common;
 using Application.Features.Auth.Commands.Login;
 using Application.Features.Auth.Commands.Login.Dtos;
-using Microsoft.AspNetCore.Identity.Data;
+using Application.Features.Auth.Commands.RefreshToken;
+using Application.Features.Auth.Commands.RefreshToken.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetAssessment.Controllers
@@ -20,10 +22,22 @@ namespace DotnetAssessment.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> Login([FromBody] Application.Features.Auth.Commands.Login.Dtos.LoginRequest request, CancellationToken ct)
+        public async Task<ActionResult<Result<LoginResponse>>> Login([FromBody] Application.Features.Auth.Commands.Login.Dtos.LoginRequest request, CancellationToken ct)
         {
             var result = await _commands.Dispatch(new LoginCommand(request), ct);
+            if (result.IsFailure)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<ActionResult<Result<LoginResponse>>> Refresh([FromBody] RefreshTokenRequest request, CancellationToken ct)
+        {
+            var result = await _commands.Dispatch(new RefreshTokenCommand(request.Token, request.RefreshToken), ct);
+            if (result.IsFailure)
+                return BadRequest(result);
             return Ok(result);
         }
     }
+
 }

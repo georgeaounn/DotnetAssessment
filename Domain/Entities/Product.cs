@@ -9,6 +9,7 @@ public class Product
     public string Name { get; set; } = "";
     [Required, Range(0,double.MaxValue)]
     public decimal BasePrice { get; set; }
+    public bool IsActive { get; set; } = true;
 
 }
 

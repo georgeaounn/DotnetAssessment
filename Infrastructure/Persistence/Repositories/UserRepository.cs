@@ -31,6 +31,12 @@ namespace Infrastructure.Persistence.Repositories
             => _db.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == email, ct);
+
+        public async Task UpdateAsync(User user, CancellationToken ct)
+        {
+            _db.Users.Update(user);
+            await _db.SaveChangesAsync(ct);
+        }
     }
 
 

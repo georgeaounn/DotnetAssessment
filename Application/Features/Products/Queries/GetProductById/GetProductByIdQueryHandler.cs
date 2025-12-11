@@ -20,7 +20,7 @@ namespace Application.Features.Products.Queries.GetProductById
             if (product is null) 
                 return Result<ProductDto?>.Failure("Invalid product id");
 
-            return Result<ProductDto?>.Success( new ProductDto(product.Id, product.Name, product.BasePrice));
+            return Result<ProductDto?>.Success( new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
         }
     }
 

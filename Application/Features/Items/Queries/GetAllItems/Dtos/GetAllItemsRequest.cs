@@ -11,5 +11,6 @@ namespace Application.Features.Items.Queries.GetAllItems.Dtos
     {
         public Guid ProductId { get; set; }
         public string Search { get; set; } = "";
+        public bool? IsSold { get; set; }
     }
 }

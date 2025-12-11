@@ -21,7 +21,7 @@ public class GetAllProductsQueryHandler : IQueryHandler<GetAllProductsQuery, Res
     {
         var (products, TotalCount) = await _productRepository.GetPaginatedAsync(Query.Request, ct);
 
-        var dtoProducts = products.Select(p => new ProductDto(p.Id, p.Name, p.BasePrice)).ToList();
+        var dtoProducts = products.Select(p => new ProductDto(p.Id, p.Name, p.BasePrice, p.IsActive)).ToList();
 
         var pagedResult = new PaginationResult<ProductDto>(
             dtoProducts,

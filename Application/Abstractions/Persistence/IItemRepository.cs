@@ -15,5 +15,8 @@ namespace Application.Abstractions.Persistence
         Task<List<Item>> GetByIdsAsync(List<Guid> ids, CancellationToken ct);
         Task<Item?> GetByIdAsync(Guid id, CancellationToken ct);
         Task UpdateItemStatus(List<Guid> ids, bool Status, CancellationToken ct);
+        Task UpdateAsync(Item item, CancellationToken ct);
+        Task DeleteAsync(Item item, CancellationToken ct);
+        Task<bool> HasSoldItemsByProductIdAsync(Guid productId, CancellationToken ct);
     }
 }

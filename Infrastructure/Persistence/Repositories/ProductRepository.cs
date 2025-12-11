@@ -37,9 +37,25 @@ namespace Infrastructure.Persistence.Repositories
             if (!string.IsNullOrWhiteSpace(Request.Search))
                 Query = Query.Where(i => i.Name.Contains(Request.Search));
 
+            // Filter by IsActive
+            if (Request.IsActive.HasValue)
+                Query = Query.Where(p => p.IsActive == Request.IsActive.Value);
+
             int Total = await Query.CountAsync();
 
             return (await Query.OrderBy(i => i.Name).Skip(Request.PageSize * (Request.PageNumber - 1)).Take(Request.PageSize).ToListAsync(ct), Total);
+        }
+
+        public async Task UpdateAsync(Product product, CancellationToken ct)
+        {
+            _db.Products.Update(product);
+            await _db.SaveChangesAsync(ct);
+        }
+
+        public async Task DeleteAsync(Product product, CancellationToken ct)
+        {
+            _db.Products.Remove(product);
+            await _db.SaveChangesAsync(ct);
         }
     }
 

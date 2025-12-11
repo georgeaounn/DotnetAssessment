@@ -19,7 +19,7 @@ namespace Application.Features.Items.Queries.GetAllItems
         {
             var (Items, TotalCount) = await _itemRepository.GetPaginatedAsync(Query.Request, ct);
 
-            var DtoItems = Items.Select(i => new ItemDto(i.Id, i.Name, i.ProductId)).ToList();
+            var DtoItems = Items.Select(i => new ItemDto(i.Id, i.Name, i.ProductId, i.IsSold)).ToList();
 
             var pagedResult = new PaginationResult<ItemDto>(
                 DtoItems,

@@ -10,4 +10,6 @@ public interface IProductRepository
     Task<Product?> GetByIdAsync(Guid id, CancellationToken ct);
     Task<bool> NameExistsAsync(string Name, CancellationToken ct);
     Task<(List<Product>, int Total)> GetPaginatedAsync(GetAllProductsRequest Request, CancellationToken ct);
+    Task UpdateAsync(Product product, CancellationToken ct);
+    Task DeleteAsync(Product product, CancellationToken ct);
 }
