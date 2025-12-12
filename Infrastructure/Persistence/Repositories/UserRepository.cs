@@ -38,6 +38,11 @@ namespace Infrastructure.Persistence.Repositories
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Email == email, ct);
 
+        public Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken ct)
+            => _db.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken, ct);
+
         public async Task UpdateAsync(User user, CancellationToken ct)
         {
             _db.Users.Update(user);

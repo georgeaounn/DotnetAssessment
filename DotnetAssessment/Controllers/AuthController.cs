@@ -29,7 +29,7 @@ namespace DotnetAssessment.Controllers
         [HttpPost("Refresh")]
         public async Task<ActionResult<Result<LoginResponse>>> Refresh([FromBody] RefreshTokenRequest request,CancellationToken ct)
         {
-            var result = await _commands.Dispatch(new RefreshTokenCommand(request.Token, request.RefreshToken), ct);
+            var result = await _commands.Dispatch(new RefreshTokenCommand(request.RefreshToken), ct);
             if(result.IsFailure)
                 return BadRequest(result);
             return Ok(result);

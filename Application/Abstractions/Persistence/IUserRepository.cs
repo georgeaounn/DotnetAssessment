@@ -14,6 +14,7 @@ namespace Application.Abstractions.Persistence
     Task<User?> GetByIdAsync(Guid id, CancellationToken ct);
     Task<User?> GetByIdWithRoleAsync(Guid id, CancellationToken ct);
     Task<User?> GetByEmailAsync(string email, CancellationToken ct);
+    Task<User?> GetByRefreshTokenAsync(string refreshToken, CancellationToken ct);
     Task UpdateAsync(User user, CancellationToken ct);
     Task<(List<User>, int Total)> GetPaginatedAsync(Application.Features.Users.Queries.GetAllUsers.Dtos.GetAllUsersRequest request, CancellationToken ct);
     }
