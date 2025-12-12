@@ -12,6 +12,7 @@ namespace Infrastructure.Persistence
         public DbSet<Item> Items => Set<Item>();
         public DbSet<Order> Orders => Set<Order>();
         public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+        public DbSet<AuditLog> AuditLogs => Set<Domain.Entities.AuditLog>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

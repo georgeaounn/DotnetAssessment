@@ -1,15 +1,25 @@
 using DotnetAssessment.Middleware;
+using DotnetAssessment.Filters;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
+
 // Add services to the container.
 
-builder.Services.AddControllers().AddJsonOptions(o =>
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<AuditActionFilter>();
+})
+.AddJsonOptions(o =>
 {
     o.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
 }); 
@@ -110,6 +120,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

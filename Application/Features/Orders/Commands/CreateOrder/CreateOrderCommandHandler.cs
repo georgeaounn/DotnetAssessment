@@ -32,7 +32,7 @@ namespace Application.Features.Orders.Commands.CreateOrder
             if(items.Count != ids.Count)
                 return Result<OrderDto>.Failure("Some items not found");
 
-            var order = new Order() { CustomerId = command.CustomerId };
+            var order = new Order() { CustomerId = command.CustomerId, CreatedAt = DateTime.Now };
 
             foreach(var req in command.Items)
             {

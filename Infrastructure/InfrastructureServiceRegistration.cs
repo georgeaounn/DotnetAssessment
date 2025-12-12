@@ -4,7 +4,6 @@ using Application.Abstractions.Persistence;
 using Application.Abstractions.Services;
 using Infrastructure.Auditing;
 using Infrastructure.CQRS;
-using Infrastructure.Logging;
 using Infrastructure.Persistence.Repositories;
 using Infrastructure.Persistence;
 using Infrastructure.Services;
@@ -40,8 +39,7 @@ namespace Infrastructure
 
             // Services
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            services.AddSingleton<IAuditService, FileAuditService>();
-            services.AddSingleton<IErrorLogger, FileErrorLogger>();
+            services.AddScoped<IAuditService, DatabaseAuditService>();
             services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
             services.AddScoped<Application.Abstractions.Services.IJwtTokenService, Identity.JwtTokenService>();
 
