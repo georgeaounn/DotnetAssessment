@@ -19,8 +19,7 @@ namespace Infrastructure.Services
         {
             get
             {
-                var userIdClaim = _accessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                                  ?? _accessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+                var userIdClaim = _accessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 return Guid.TryParse(userIdClaim, out var id) ? id : Guid.Empty;
             }
         }
@@ -29,8 +28,7 @@ namespace Infrastructure.Services
         {
             get
             {
-                var roleIdClaim = _accessor.HttpContext?.User?.FindFirst(ClaimTypes.Role)?.Value
-                                 ?? _accessor.HttpContext?.User?.FindFirst("RoleId")?.Value;
+                var roleIdClaim = _accessor.HttpContext?.User?.FindFirst(ClaimTypes.Role)?.Value;
                 return int.TryParse(roleIdClaim, out var id) ? id : 0;
             }
         }

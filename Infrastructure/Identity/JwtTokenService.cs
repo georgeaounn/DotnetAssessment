@@ -28,12 +28,10 @@ namespace Infrastructure.Identity
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim(ClaimTypes.Email, email),
-            new Claim(ClaimTypes.Role, roleId.ToString()),
-            new Claim("UserId", userId.ToString()),
-            new Claim("RoleId", roleId.ToString())
-        };
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Role, roleId.ToString())
+            };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

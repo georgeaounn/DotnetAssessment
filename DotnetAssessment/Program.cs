@@ -83,17 +83,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("SuperAdminOnly", policy =>
         policy.RequireAssertion(context =>
         {
-            // Check for RoleId claim (custom claim)
-            var roleIdClaim = context.User.FindFirst("RoleId")?.Value;
-            if (roleIdClaim == "1") return true;
-
-            // Also check ClaimTypes.Role as fallback
             var roleClaim = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
             return roleClaim == "1";
         }));
 });
 
-// Infrastructure + Application (handlers, repos, services)
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

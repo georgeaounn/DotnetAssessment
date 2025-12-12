@@ -12,7 +12,7 @@ public static class ApplicationServiceRegistration
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        // Register command & query handlers
+        // Register command and query handlers
         services.Scan(
             scan => scan
             .FromAssemblies(assembly)

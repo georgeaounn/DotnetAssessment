@@ -34,7 +34,7 @@ namespace Application.Features.Products.Commands.DeleteProduct
             if (product is null)
                 return Result.Failure("Invalid product");
 
-            // Check if any items with IsSold=true exist for this product
+            // Check if any items were sold for this product
             var hasSoldItems = await _items.HasSoldItemsByProductIdAsync(command.ProductId, ct);
             if (hasSoldItems)
                 return Result.Failure("Cannot delete product. There are items that are sold for this product.");
