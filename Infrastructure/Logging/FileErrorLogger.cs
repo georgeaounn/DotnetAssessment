@@ -2,7 +2,6 @@ using Application.Abstractions.Services;
 
 namespace Infrastructure.Logging
 {
-
     public class FileErrorLogger : IErrorLogger
     {
         private readonly string _path;

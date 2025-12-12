@@ -26,19 +26,19 @@ namespace Application.Features.Orders.Commands.DeleteOrder
 
         public async Task<Result> Handle(DeleteOrderCommand command, CancellationToken ct = default)
         {
-            var order = await _orders.GetById(command.OrderId, ct); 
-            if (order is null) 
-                return Result<OrderDto>.Failure("Invalid order id"); 
+            var order = await _orders.GetById(command.OrderId, ct);
+            if (order is null)
+                return Result<OrderDto>.Failure("Invalid order");
 
-            if (order.CustomerId != command.CustomerId) 
-                return Result<OrderDto>.Failure("Cannot delete an order of another user"); 
-            
-            await _items.UpdateItemStatus(order.Items.Select(u => u.ItemId).ToList(), false, ct); 
+            if (order.CustomerId != command.CustomerId)
+                return Result<OrderDto>.Failure("Cannot delete an order of another user");
+
+            await _items.UpdateItemStatus(order.Items.Select(u => u.ItemId).ToList(), false, ct);
 
             await _orders.DeleteAsync(order.Id, ct);
 
-            await _audit.RecordAsync("DeleteOrder", nameof(Order), order.Id.ToString(), command.CustomerId, ct); 
-            
+            await _audit.RecordAsync("DeleteOrder", nameof(Order), order.Id.ToString(), command.CustomerId, ct);
+
             return Result.Success();
         }
     }

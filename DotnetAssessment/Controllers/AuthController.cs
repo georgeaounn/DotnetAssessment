@@ -9,35 +9,30 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetAssessment.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly ICommandDispatcher _commands;
 
-        public AuthController(ICommandDispatcher commands)
-        {
-            _commands = commands;
-        }
+        public AuthController(ICommandDispatcher commands) { _commands = commands; }
 
-        [HttpPost("login")]
-        public async Task<ActionResult<Result<LoginResponse>>> Login([FromBody] Application.Features.Auth.Commands.Login.Dtos.LoginRequest request, CancellationToken ct)
+        [HttpPost("Login")]
+        public async Task<ActionResult<Result<LoginResponse>>> Login([FromBody] LoginRequest request,CancellationToken ct)
         {
             var result = await _commands.Dispatch(new LoginCommand(request), ct);
-            if (result.IsFailure)
+            if(result.IsFailure)
                 return BadRequest(result);
             return Ok(result);
         }
 
-        [HttpPost("refresh")]
-        public async Task<ActionResult<Result<LoginResponse>>> Refresh([FromBody] RefreshTokenRequest request, CancellationToken ct)
+        [HttpPost("Refresh")]
+        public async Task<ActionResult<Result<LoginResponse>>> Refresh([FromBody] RefreshTokenRequest request,CancellationToken ct)
         {
             var result = await _commands.Dispatch(new RefreshTokenCommand(request.Token, request.RefreshToken), ct);
-            if (result.IsFailure)
+            if(result.IsFailure)
                 return BadRequest(result);
             return Ok(result);
         }
     }
-
 }

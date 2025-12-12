@@ -8,23 +8,20 @@ namespace Infrastructure.CQRS
     {
         private readonly IServiceProvider _sp;
 
-        public QueryDispatcher(IServiceProvider sp)
-        {
-            _sp = sp;
-        }
+        public QueryDispatcher(IServiceProvider sp) { _sp = sp; }
 
         public async Task<TResult> Dispatch<TResult>(IQuery<TResult> query, CancellationToken ct = default)
         {
             // Validate query
             var validatorType = typeof(IValidator<>).MakeGenericType(query.GetType());
             var validator = _sp.GetService(validatorType);
-            
-            if (validator != null)
+
+            if(validator != null)
             {
                 var validationContext = new ValidationContext<object>(query);
                 var validationResult = await ((IValidator)validator).ValidateAsync(validationContext, ct);
-                
-                if (!validationResult.IsValid)
+
+                if(!validationResult.IsValid)
                 {
                     throw new ValidationException(validationResult.Errors);
                 }
@@ -36,5 +33,4 @@ namespace Infrastructure.CQRS
             return await handler.Handle((dynamic)query, ct);
         }
     }
-
 }

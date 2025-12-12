@@ -29,10 +29,13 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task<(List<Item>, int Total)> GetPaginatedAsync(GetAllItemsRequest Request, CancellationToken ct)
         {
-            IQueryable<Item> Query = _db.Items.AsNoTracking().Where(i => i.ProductId == Request.ProductId);
+            IQueryable<Item> Query = _db.Items.AsNoTracking();
+
+            if (Request.ProductId.HasValue)
+                Query = Query.Where(i => i.ProductId == Request.ProductId);
 
             // Search by name
-            if(!string.IsNullOrWhiteSpace(Request.Search))
+            if (!string.IsNullOrWhiteSpace(Request.Search))
                 Query = Query.Where(i => i.Name.Contains(Request.Search));
 
             // Filter by IsSold
@@ -41,7 +44,7 @@ namespace Infrastructure.Persistence.Repositories
 
             int Total = await Query.CountAsync();
 
-            return (await Query.OrderBy(i => i.Name).Skip(Request.PageSize * (Request.PageNumber - 1)).Take(Request.PageSize).ToListAsync(ct), Total);
+            return (await Query.OrderBy(i => i.Name).Include(i => i.Product).Skip(Request.PageSize * (Request.PageNumber - 1)).Take(Request.PageSize).ToListAsync(ct), Total);
         }
 
 

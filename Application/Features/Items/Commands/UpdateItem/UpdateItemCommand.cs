@@ -5,6 +5,6 @@ using Application.Features.Items.Dtos;
 
 namespace Application.Features.Items.Commands.UpdateItem
 {
-    public record UpdateItemCommand(UpdateItemRequest Request) : ICommand<Result<ItemDto>>;
+    public record UpdateItemCommand(Guid ItemId, UpdateItemRequest Request) : ICommand<Result<ItemDto>>;
 }
 

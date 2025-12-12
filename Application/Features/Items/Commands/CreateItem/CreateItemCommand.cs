@@ -7,5 +7,4 @@ using Application.Features.Items.Dtos;
 namespace Application.Features.Items.Commands.CreateItem
 {
     public record CreateItemCommand(CreateItemRequest Request) : ICommand<Result<ItemDto>>;
-
 }

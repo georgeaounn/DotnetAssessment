@@ -18,7 +18,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetAssessment.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -36,11 +35,13 @@ namespace DotnetAssessment.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Result<OrderDto>>> Create([FromBody] CreateOrderRequest request, CancellationToken ct)
+        public async Task<ActionResult<Result<OrderDto>>> Create(
+            [FromBody] CreateOrderRequest request,
+            CancellationToken ct)
         {
             var command = new CreateOrderCommand(_currentUser.UserId, request.Items);
             var result = await _commands.Dispatch(command, ct);
-            if (result.IsFailure)
+            if(result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
@@ -50,20 +51,34 @@ namespace DotnetAssessment.Controllers
         public async Task<ActionResult<Result<OrderDto>>> GetById([FromRoute] Guid id, CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetOrderByIdQuery(id), ct);
-            if (result.IsFailure) 
+            if(result.IsFailure)
                 return NotFound(result);
             return Ok(result);
         }
 
         [HttpGet("my-orders")]
-        public async Task<ActionResult<List<OrderDto>>> GetMyOrders(CancellationToken ct)
+        public async Task<ActionResult<Result<List<OrderDto>>>> GetMyOrders(CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetUserOrdersQuery(_currentUser.UserId), ct);
+            if(result.IsFailure)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("user/{userId:guid}")]
+        [Authorize(Policy = "SuperAdminOnly")]
+        public async Task<ActionResult<Result<List<OrderDto>>>> GetUserOrders(
+            [FromRoute] Guid userId,
+            CancellationToken ct)
+        {
+            var result = await _queries.Dispatch(new GetUserOrdersQuery(userId), ct);
+            if(result.IsFailure)
+                return BadRequest(result);
             return Ok(result);
         }
 
         [HttpPut("AddItemOrder")]
-        public async Task<ActionResult<List<OrderDto>>> AddItemOrder( AddItemOrderRequest Request ,CancellationToken ct)
+        public async Task<ActionResult<List<OrderDto>>> AddItemOrder(AddItemOrderRequest Request, CancellationToken ct)
         {
             var result = await _commands.Dispatch(new AddItemOrderCommand(_currentUser.UserId, Request), ct);
             if(result.IsFailure)
@@ -73,10 +88,12 @@ namespace DotnetAssessment.Controllers
         }
 
         [HttpPut("RemoveItemOrder")]
-        public async Task<ActionResult<List<OrderDto>>> RemoveItemOrder(RemoveItemOrderRequest Request, CancellationToken ct)
+        public async Task<ActionResult<List<OrderDto>>> RemoveItemOrder(
+            RemoveItemOrderRequest Request,
+            CancellationToken ct)
         {
             var result = await _commands.Dispatch(new RemoveItemOrderCommand(_currentUser.UserId, Request), ct);
-            if (result.IsFailure)
+            if(result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
@@ -87,11 +104,10 @@ namespace DotnetAssessment.Controllers
         public async Task<ActionResult<List<OrderDto>>> Delete([FromRoute] Guid id, CancellationToken ct)
         {
             var result = await _commands.Dispatch(new DeleteOrderCommand(_currentUser.UserId, id), ct);
-            if (result.IsFailure)
+            if(result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
         }
-
     }
 }

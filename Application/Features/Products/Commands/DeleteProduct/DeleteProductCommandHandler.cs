@@ -8,10 +8,10 @@ namespace Application.Features.Products.Commands.DeleteProduct
 {
     public class DeleteProductCommandHandler : ICommandHandler<DeleteProductCommand, Result>
     {
-        private readonly IProductRepository _products;
-        private readonly IItemRepository _items;
-        private readonly ICurrentUser _currentUser;
         private readonly IAuditService _audit;
+        private readonly ICurrentUser _currentUser;
+        private readonly IItemRepository _items;
+        private readonly IProductRepository _products;
 
         public DeleteProductCommandHandler(
             IProductRepository products,

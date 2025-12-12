@@ -1,12 +1,10 @@
 
 using Application.Abstractions.Persistence;
-using Application.Common;
-using Application.Features.Items.Queries.GetAllItems.Dtos;
 using Application.Features.Products.Queries.GetAllProducts.Dtos;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Persistence.Repositories 
+namespace Infrastructure.Persistence.Repositories
 {
 
     public class ProductRepository : IProductRepository

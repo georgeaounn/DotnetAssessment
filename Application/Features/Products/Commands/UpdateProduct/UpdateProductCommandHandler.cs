@@ -13,10 +13,7 @@ namespace Application.Features.Products.Commands.UpdateProduct
         private readonly ICurrentUser _currentUser;
         private readonly IAuditService _audit;
 
-        public UpdateProductCommandHandler(
-            IProductRepository products,
-            ICurrentUser currentUser,
-            IAuditService audit)
+        public UpdateProductCommandHandler(IProductRepository products, ICurrentUser currentUser, IAuditService audit)
         {
             _products = products;
             _currentUser = currentUser;
@@ -25,16 +22,16 @@ namespace Application.Features.Products.Commands.UpdateProduct
 
         public async Task<Result<ProductDto>> Handle(UpdateProductCommand command, CancellationToken ct = default)
         {
-            if (!_currentUser.IsSuperAdmin)
+            if(!_currentUser.IsSuperAdmin)
                 throw new UnauthorizedAccessException("Only SuperAdmins can update products");
 
             var product = await _products.GetByIdAsync(command.ProductId, ct);
-            if (product is null)
+            if(product is null)
                 return Result<ProductDto>.Failure("Product not found");
 
             // Check if name already exists for a different product
             var nameExists = await _products.NameExistsAsync(command.Name, ct);
-            if (nameExists && product.Name != command.Name)
+            if(nameExists && product.Name != command.Name)
                 return Result<ProductDto>.Failure("A product with this name already exists");
 
             product.Name = command.Name;
@@ -45,7 +42,8 @@ namespace Application.Features.Products.Commands.UpdateProduct
 
             await _audit.RecordAsync("UpdateProduct", nameof(Product), product.Id.ToString(), _currentUser.UserId, ct);
 
-            return Result<ProductDto>.Success(new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
+            return Result<ProductDto>.Success(
+                new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
         }
     }
 }

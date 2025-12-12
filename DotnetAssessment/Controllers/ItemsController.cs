@@ -29,11 +29,11 @@ namespace DotnetAssessment.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<Result<PaginationResult<ItemDto>>>> GetAll([FromQuery] GetAllItemsRequest Request, CancellationToken ct)
+        public async Task<ActionResult<Result<PaginationResult<ListItemDto>>>> GetAll([FromQuery] GetAllItemsRequest Request, CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetAllItemsQuery(Request), ct);
 
-            if(result.IsFailure)
+            if (result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
@@ -61,11 +61,11 @@ namespace DotnetAssessment.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
+        [HttpPut("{id:guid}")]
         [Authorize(Policy = "SuperAdminOnly")]
-        public async Task<ActionResult<Result<ItemDto>>> Update([FromBody] UpdateItemRequest Request, CancellationToken ct)
+        public async Task<ActionResult<Result<ItemDto>>> Update([FromRoute] Guid id, [FromBody] UpdateItemRequest Request, CancellationToken ct)
         {
-            var result = await _commands.Dispatch(new UpdateItemCommand(Request), ct);
+            var result = await _commands.Dispatch(new UpdateItemCommand(id, Request), ct);
             if (result.IsFailure)
                 return BadRequest(result);
             return Ok(result);

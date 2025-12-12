@@ -33,7 +33,7 @@ namespace DotnetAssessment.Controllers
         public async Task<ActionResult<Result<List<ProductDto>>>> GetAll([FromQuery] GetAllProductsRequest Request, CancellationToken ct)
         {
             var result = await _queries.Dispatch(new GetAllProductsQuery(Request), ct);
-            if(result.IsFailure)
+            if (result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
@@ -45,7 +45,7 @@ namespace DotnetAssessment.Controllers
         {
             var result = await _queries.Dispatch(new GetProductByIdQuery(id), ct);
 
-            if (result is null) 
+            if (result is null)
                 return NotFound(result);
 
             return Ok(result);
@@ -57,7 +57,7 @@ namespace DotnetAssessment.Controllers
         {
             var result = await _commands.Dispatch(
                 new CreateProductCommand(request.Name, request.BasePrice), ct);
-            if(result.IsFailure)
+            if (result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
@@ -69,7 +69,7 @@ namespace DotnetAssessment.Controllers
         {
             var result = await _commands.Dispatch(
                 new UpdateProductCommand(id, request.Name, request.BasePrice, request.IsActive), ct);
-            if(result.IsFailure)
+            if (result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);
@@ -80,7 +80,7 @@ namespace DotnetAssessment.Controllers
         public async Task<ActionResult<Result>> Delete([FromRoute] Guid id, CancellationToken ct)
         {
             var result = await _commands.Dispatch(new DeleteProductCommand(id), ct);
-            if(result.IsFailure)
+            if (result.IsFailure)
                 return BadRequest(result);
 
             return Ok(result);

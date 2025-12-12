@@ -19,12 +19,12 @@ public class CommandDispatcher : ICommandDispatcher
         // Validate command
         var validatorType = typeof(IValidator<>).MakeGenericType(command.GetType());
         var validator = _sp.GetService(validatorType);
-        
+
         if (validator != null)
         {
             var validationContext = new ValidationContext<object>(command);
             var validationResult = await ((IValidator)validator).ValidateAsync(validationContext, ct);
-            
+
             if (!validationResult.IsValid)
             {
                 throw new ValidationException(validationResult.Errors);

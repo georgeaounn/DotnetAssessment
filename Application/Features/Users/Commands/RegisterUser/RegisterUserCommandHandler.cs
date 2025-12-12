@@ -38,7 +38,7 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, R
         if(role is null)
             return Result<UserDto>.Failure("Invalid role");
 
-        if (await _users.EmailExistsAsync(req.Email, ct))
+        if(await _users.EmailExistsAsync(req.Email, ct))
             return Result<UserDto>.Failure("Email already registered");
 
         var hash = _hasher.Hash(req.Password);

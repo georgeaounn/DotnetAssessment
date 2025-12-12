@@ -28,17 +28,19 @@ namespace Application.Features.Orders.Commands.AddItemOrder
         {
             var order = await _orders.GetById(command.Request.OrderId, ct); 
             if (order is null) 
-                return Result<OrderDto>.Failure("Invalid order id"); 
+                return Result<OrderDto>.Failure("Invalid order"); 
             if (order.CustomerId != command.CustomerId) 
                 return Result<OrderDto>.Failure("Cannot edit an order of another user"); 
             
             var item = await _items.GetByIdAsync(command.Request.ItemId, ct); 
             if (item is null) 
-                return Result<OrderDto>.Failure("Invalid item id"); 
+                return Result<OrderDto>.Failure("Invalid item"); 
             if (item.IsSold) 
                 return Result<OrderDto>.Failure("This item has already been sold"); 
             
-            await _items.UpdateItemStatus(new List<Guid>() { item.Id }, true, ct);
+            //await _items.UpdateItemStatus(new List<Guid>() { item.Id }, true, ct);
+            item.IsSold = true;
+            await _items.UpdateAsync(item, ct);
 
             await _orders.AddItemOrderAsync(order, item, ct);
 

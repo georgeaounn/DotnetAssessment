@@ -5,8 +5,6 @@ using Application.Abstractions.Services;
 using Application.Common;
 using Application.Features.Items.Dtos;
 using Domain.Entities;
-using System.Reflection.Metadata.Ecma335;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Features.Items.Commands.CreateItem
 {
@@ -31,7 +29,7 @@ namespace Application.Features.Items.Commands.CreateItem
 
         public async Task<Result<ItemDto>> Handle(CreateItemCommand command, CancellationToken ct = default)
         {
-            if (!_currentUser.IsSuperAdmin)
+            if(!_currentUser.IsSuperAdmin)
                 throw new UnauthorizedAccessException("Only SuperAdmins can create items");
 
             var product = await _products.GetByIdAsync(command.Request.ProductId, ct);
@@ -39,7 +37,7 @@ namespace Application.Features.Items.Commands.CreateItem
             if(product is null)
                 return Result<ItemDto>.Failure($"Product with id {command.Request.ProductId} not found");
 
-            var item = new Item() { ProductId = product.Id, Name = command.Request.Name};
+            var item = new Item() { ProductId = product.Id, Name = command.Request.Name };
             await _items.AddAsync(item, ct);
 
             await _audit.RecordAsync("CreateItem", nameof(Item), item.Id.ToString(), _currentUser.UserId, ct);
@@ -47,5 +45,4 @@ namespace Application.Features.Items.Commands.CreateItem
             return Result<ItemDto>.Success(new ItemDto(item.Id, item.Name, item.ProductId, item.IsSold));
         }
     }
-
 }

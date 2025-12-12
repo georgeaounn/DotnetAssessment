@@ -13,15 +13,15 @@ public static class ApplicationServiceRegistration
         var assembly = Assembly.GetExecutingAssembly();
 
         // Register command & query handlers
-        services.Scan(scan => scan
+        services.Scan(
+            scan => scan
             .FromAssemblies(assembly)
-            .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
+                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
-            .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
+                .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)))
                 .AsImplementedInterfaces()
-                .WithScopedLifetime()
-        );
+                .WithScopedLifetime());
 
         // Validators
         services.AddValidatorsFromAssembly(assembly);

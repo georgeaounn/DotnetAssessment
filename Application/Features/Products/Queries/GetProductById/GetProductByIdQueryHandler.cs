@@ -17,10 +17,10 @@ namespace Application.Features.Products.Queries.GetProductById
         public async Task<Result<ProductDto?>> Handle(GetProductByIdQuery query, CancellationToken ct = default)
         {
             var product = await _productRepository.GetByIdAsync(query.ProductId, ct);
-            if (product is null) 
-                return Result<ProductDto?>.Failure("Invalid product id");
+            if (product is null)
+                return Result<ProductDto?>.Failure("Invalid product");
 
-            return Result<ProductDto?>.Success( new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
+            return Result<ProductDto?>.Success(new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
         }
     }
 

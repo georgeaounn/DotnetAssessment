@@ -2,8 +2,6 @@
 using Application.Abstractions.CQRS;
 using Application.Abstractions.Persistence;
 using Application.Common;
-using Application.Features.Items.Dtos;
-using Application.Features.Items.Queries.GetAllItems;
 using Application.Features.Products.Dtos;
 
 namespace Application.Features.Products.Queries.GetAllProducts;

@@ -11,10 +11,7 @@ namespace Application.Features.Items.Commands.DeleteItem
         private readonly ICurrentUser _currentUser;
         private readonly IAuditService _audit;
 
-        public DeleteItemCommandHandler(
-            IItemRepository items,
-            ICurrentUser currentUser,
-            IAuditService audit)
+        public DeleteItemCommandHandler(IItemRepository items, ICurrentUser currentUser, IAuditService audit)
         {
             _items = items;
             _currentUser = currentUser;
@@ -23,19 +20,24 @@ namespace Application.Features.Items.Commands.DeleteItem
 
         public async Task<Result> Handle(DeleteItemCommand command, CancellationToken ct = default)
         {
-            if (!_currentUser.IsSuperAdmin)
+            if(!_currentUser.IsSuperAdmin)
                 throw new UnauthorizedAccessException("Only SuperAdmins can delete items");
 
             var item = await _items.GetByIdAsync(command.ItemId, ct);
-            if (item is null)
+            if(item is null)
                 return Result.Failure("Item not found");
 
-            if (item.IsSold)
-                return Result.Failure("Cannot delete item. Item has IsSold=true.");
+            if(item.IsSold)
+                return Result.Failure("Cannot delete item because it is sold");
 
             await _items.DeleteAsync(item, ct);
 
-            await _audit.RecordAsync("DeleteItem", nameof(Domain.Entities.Item), item.Id.ToString(), _currentUser.UserId, ct);
+            await _audit.RecordAsync(
+                "DeleteItem",
+                nameof(Domain.Entities.Item),
+                item.Id.ToString(),
+                _currentUser.UserId,
+                ct);
 
             return Result.Success();
         }

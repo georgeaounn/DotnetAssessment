@@ -8,10 +8,12 @@ namespace Application.Features.Orders.Commands.CreateOrder
         {
             RuleFor(x => x.CustomerId).NotEmpty();
             RuleFor(x => x.Items).NotEmpty().WithMessage("Order must contain at least one item");
-            RuleForEach(x => x.Items).ChildRules(items =>
-            {
-                items.RuleFor(i => i.ItemId).NotEmpty().WithMessage("ItemId is required");
-            });
+            RuleForEach(x => x.Items)
+                .ChildRules(
+                    items =>
+                    {
+                        items.RuleFor(i => i.ItemId).NotEmpty().WithMessage("ItemId is required");
+                    });
         }
     }
 }

@@ -19,6 +19,10 @@ namespace Infrastructure.Persistence
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>()
+                    .HasIndex(p => p.Email)
+                    .IsUnique();
+            
             modelBuilder.Entity<Product>()
                     .HasIndex(p => p.Name)
                     .IsUnique();

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Identity
 {
-
     public class PasswordHasher : IPasswordHasher
     {
         public string Hash(string password)

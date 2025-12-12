@@ -9,9 +9,9 @@ namespace Application.Features.Auth.Commands.Login
 {
     public class LoginCommandHandler : ICommandHandler<LoginCommand, Result<LoginResponse>>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly IUserRepository _userRepository;
 
         public LoginCommandHandler(
             IUserRepository userRepository,
@@ -28,7 +28,7 @@ namespace Application.Features.Auth.Commands.Login
             var request = command.Request;
 
             var user = await _userRepository.GetByEmailAsync(request.Email, ct);
-            if(user is null)
+            if (user is null)
                 return Result<LoginResponse>.Failure("Invalid email or password");
 
             if (!_passwordHasher.Verify(request.Password, user.Password))
@@ -36,7 +36,7 @@ namespace Application.Features.Auth.Commands.Login
 
             var token = _jwtTokenService.GenerateToken(user.Id, user.Email, user.RoleId);
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
-            
+
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
             await _userRepository.UpdateAsync(user, ct);
