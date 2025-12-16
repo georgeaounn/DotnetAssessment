@@ -21,7 +21,7 @@ namespace Infrastructure.Identity
 
         public string GenerateToken(Guid userId, string email, int roleId)
         {
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong!");
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "17118a85b7453ce36d01b846788a36d0a55d54782a0b707c262e639f9615a1a3fa0f38614b2315ab");
             var issuer = _configuration["Jwt:Issuer"] ?? "DotnetAssessment";
             var audience = _configuration["Jwt:Audience"] ?? "DotnetAssessment";
             var expiryMinutes = int.Parse(_configuration["Jwt:ExpiryMinutes"] ?? "60");
@@ -59,7 +59,7 @@ namespace Infrastructure.Identity
 
         public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong!");
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "17118a85b7453ce36d01b846788a36d0a55d54782a0b707c262e639f9615a1a3fa0f38614b2315ab");
             var issuer = _configuration["Jwt:Issuer"] ?? "DotnetAssessment";
             var audience = _configuration["Jwt:Audience"] ?? "DotnetAssessment";
 

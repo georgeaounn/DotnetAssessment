@@ -27,7 +27,7 @@ builder.Services.AddHttpContextAccessor();
 
 
 // JWT Authentication
-var jwtKey = builder.Configuration["Jwt:Key"] ?? "YourSuperSecretKeyThatIsAtLeast32CharactersLong!";
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "17118a85b7453ce36d01b846788a36d0a55d54782a0b707c262e639f9615a1a3fa0f38614b2315ab";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "DotnetAssessment";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "DotnetAssessment";
 
