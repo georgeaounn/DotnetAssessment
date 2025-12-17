@@ -10,10 +10,12 @@ namespace DotnetAssessment.Filters
     {
         private readonly IAuditService _auditService;
         private readonly ILogger<AuditActionFilter> _logger;
+        private readonly ICurrentUser _currentUser;
 
-        public AuditActionFilter(IAuditService auditService, ILogger<AuditActionFilter> logger)
+        public AuditActionFilter(IAuditService auditService, ILogger<AuditActionFilter> logger, ICurrentUser currentUser)
         {
             _auditService = auditService;
+            _currentUser = currentUser;
             _logger = logger;
         }
 
@@ -26,8 +28,7 @@ namespace DotnetAssessment.Filters
             {
                 try
                 {
-                    var userIdClaim = context.HttpContext.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                    Guid? userId = Guid.TryParse(userIdClaim, out var id) ? id : null;
+                    Guid? userId = _currentUser.UserId;
 
                     var actionName = context.ActionDescriptor.RouteValues["action"] 
                                   ?? context.ActionDescriptor.DisplayName?.Split('.').LastOrDefault() 
@@ -66,7 +67,7 @@ namespace DotnetAssessment.Filters
                         action: action,
                         entityName: entityName,
                         entityId: entityId ?? "N/A",
-                        userId: userId,
+                        userId: userId != Guid.Empty ? userId : null,
                         ct: context.HttpContext.RequestAborted);
                 }
                 catch (Exception ex)
