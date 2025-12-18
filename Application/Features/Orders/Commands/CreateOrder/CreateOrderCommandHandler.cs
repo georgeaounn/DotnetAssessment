@@ -44,8 +44,6 @@ namespace Application.Features.Orders.Commands.CreateOrder
 
             await _orders.AddAsync(order, ct);
 
-            await _audit.RecordAsync("CreateOrder", nameof(Order), order.Id.ToString(), command.CustomerId, ct);
-
             var dtoItems = order.Items
                 .Select(
                     oi =>

@@ -43,12 +43,6 @@ namespace Application.Features.Items.Commands.UpdateItem
 
             await _items.UpdateAsync(item, ct);
 
-            await _audit.RecordAsync(
-                "UpdateItem",
-                nameof(Domain.Entities.Item),
-                item.Id.ToString(),
-                _currentUser.UserId,
-                ct);
 
             return Result<ItemDto>.Success(new ItemDto(item.Id, item.Name, item.ProductId, item.IsSold));
         }

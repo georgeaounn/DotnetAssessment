@@ -40,8 +40,6 @@ namespace Application.Features.Items.Commands.CreateItem
             var item = new Item() { ProductId = product.Id, Name = command.Request.Name };
             await _items.AddAsync(item, ct);
 
-            await _audit.RecordAsync("CreateItem", nameof(Item), item.Id.ToString(), _currentUser.UserId, ct);
-
             return Result<ItemDto>.Success(new ItemDto(item.Id, item.Name, item.ProductId, item.IsSold));
         }
     }

@@ -13,21 +13,15 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, R
     private readonly IUserRepository _users;
     private readonly IRoleRepository _roles;
     private readonly IPasswordHasher _hasher;
-    private readonly IAuditService _audit;
-    private readonly ILogger<RegisterUserCommandHandler> _logger;
 
     public RegisterUserCommandHandler(
         IUserRepository users,
         IRoleRepository roles,
-        IPasswordHasher hasher,
-        IAuditService audit,
-        ILogger<RegisterUserCommandHandler> logger)
+        IPasswordHasher hasher)
     {
         _users = users;
         _roles = roles;
         _hasher = hasher;
-        _audit = audit;
-        _logger = logger;
     }
 
     public async Task<Result<UserDto>> Handle(RegisterUserCommand command, CancellationToken ct = default)
@@ -45,10 +39,6 @@ public class RegisterUserCommandHandler : ICommandHandler<RegisterUserCommand, R
         var user = new User() { Name = req.Name, Email = req.Email, Password = hash, RoleId = req.RoleId };
 
         await _users.AddAsync(user, ct);
-
-        await _audit.RecordAsync("RegisterUser", nameof(User), user.Id.ToString(), user.Id, ct);
-
-        _logger.LogInformation("User {UserId} registered", user.Id);
 
         return Result<UserDto>.Success(new UserDto(user.Id, user.Name, user.Email, role.Name));
     }

@@ -1,4 +1,5 @@
 using Application.Abstractions.Services;
+using Application.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
@@ -45,19 +46,36 @@ namespace DotnetAssessment.Filters
 
                     var action = $"{entityName}.{actionName}";
                     
-                    if (string.IsNullOrEmpty(entityId) && executedContext.Result is ObjectResult objectResult)
+                    if (string.IsNullOrEmpty(entityId) && executedContext.Result is OkObjectResult objectResult)
                     {
                         var resultValue = objectResult.Value;
                         if (resultValue != null)
                         {
-                            var idProperty = resultValue.GetType().GetProperty("Id") 
-                                          ?? resultValue.GetType().GetProperty("Data")?.PropertyType.GetProperty("Id");
-                            if (idProperty != null)
+                            object? dataObject = null;
+                            var resultType = resultValue.GetType();
+                            
+                            // Check if it's a Result<T> type by checking if it inherits from Result and has a Data property
+                            if (typeof(Result).IsAssignableFrom(resultType) && resultType.IsGenericType)
                             {
-                                var idValueFromResult = idProperty.GetValue(resultValue)?.ToString();
-                                if (!string.IsNullOrEmpty(idValueFromResult))
+                                // Get the Data property from Result<T>
+                                var dataProperty = resultType.GetProperty("Data");
+                                if (dataProperty != null)
                                 {
-                                    entityId = idValueFromResult;
+                                    dataObject = dataProperty.GetValue(resultValue);
+                                }
+                            }
+
+                            // Try to get Id from the data object
+                            if (dataObject != null)
+                            {
+                                var idProperty = dataObject.GetType().GetProperty("Id");
+                                if (idProperty != null)
+                                {
+                                    var idValueFromResult = idProperty.GetValue(dataObject)?.ToString();
+                                    if (!string.IsNullOrEmpty(idValueFromResult))
+                                    {
+                                        entityId = idValueFromResult;
+                                    }
                                 }
                             }
                         }

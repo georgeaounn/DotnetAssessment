@@ -96,7 +96,7 @@ namespace Tests.Features.Auth
             Assert.NotNull(result.Data);
             Assert.Equal("jwt-token", result.Data.Token);
             Assert.Equal("refresh-token", result.Data.RefreshToken);
-            Assert.Equal(userId, result.Data.UserId);
+            Assert.Equal(userId, result.Data.Id);
             Assert.Equal("test@example.com", result.Data.Email);
 
             userRepo.Verify(x => x.UpdateAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);

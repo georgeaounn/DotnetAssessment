@@ -49,8 +49,6 @@ namespace Application.Features.Orders.Commands.RemoveItemOrder
 
             await _orders.RemoveItemOrderAsync(order, orderItem, ct);
 
-            await _audit.RecordAsync("RemoveItemOrder", nameof(Order), order.Id.ToString(), command.CustomerId, ct);
-
             var dtoItems = order.Items.Select(oi => { return new OrderItemDto(oi.ItemId, item.Name, oi.UnitPrice); }).ToList();
 
             return Result<OrderDto>.Success(new OrderDto(order.Id, order.CustomerId, order.CreatedAt, order.TotalPrice, dtoItems));

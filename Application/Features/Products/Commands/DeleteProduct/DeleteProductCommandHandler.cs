@@ -41,8 +41,6 @@ namespace Application.Features.Products.Commands.DeleteProduct
 
             await _products.DeleteAsync(product, ct);
 
-            await _audit.RecordAsync("DeleteProduct", nameof(Product), product.Id.ToString(), _currentUser.UserId, ct);
-
             return Result.Success();
         }
     }

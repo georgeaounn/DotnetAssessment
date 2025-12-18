@@ -40,8 +40,6 @@ namespace Application.Features.Products.Commands.UpdateProduct
 
             await _products.UpdateAsync(product, ct);
 
-            await _audit.RecordAsync("UpdateProduct", nameof(Product), product.Id.ToString(), _currentUser.UserId, ct);
-
             return Result<ProductDto>.Success(
                 new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
         }

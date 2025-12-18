@@ -37,8 +37,6 @@ namespace Application.Features.Orders.Commands.DeleteOrder
 
             await _orders.DeleteAsync(order.Id, ct);
 
-            await _audit.RecordAsync("DeleteOrder", nameof(Order), order.Id.ToString(), command.CustomerId, ct);
-
             return Result.Success();
         }
     }

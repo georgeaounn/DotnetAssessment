@@ -36,8 +36,6 @@ public class CreateProductCommandHandler : ICommandHandler<CreateProductCommand,
         var product = new Product() { Name = command.Name, BasePrice = command.BasePrice };
         await _products.AddAsync(product, ct);
 
-        await _audit.RecordAsync("CreateProduct", nameof(Product), product.Id.ToString(), _currentUser.UserId, ct);
-
         return Result<ProductDto>.Success(new ProductDto(product.Id, product.Name, product.BasePrice, product.IsActive));
     }
 }

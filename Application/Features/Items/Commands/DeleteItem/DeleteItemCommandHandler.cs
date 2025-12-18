@@ -32,13 +32,6 @@ namespace Application.Features.Items.Commands.DeleteItem
 
             await _items.DeleteAsync(item, ct);
 
-            await _audit.RecordAsync(
-                "DeleteItem",
-                nameof(Domain.Entities.Item),
-                item.Id.ToString(),
-                _currentUser.UserId,
-                ct);
-
             return Result.Success();
         }
     }
