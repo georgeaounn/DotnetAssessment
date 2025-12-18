@@ -14,9 +14,10 @@ namespace Application.Features.Users.Commands.RegisterUser
                 .WithMessage("Name is required and must not exceed 100 characters");
             RuleFor(x => x.Request.Email)
                 .NotEmpty()
+                .MaximumLength(150)
                 .EmailAddress()
                 .When(x => x.Request != null)
-                .WithMessage("Valid email is required");
+                .WithMessage("Valid email is required and must not exceed 150 characters");
             RuleFor(x => x.Request.Password)
                 .NotEmpty()
                 .MinimumLength(6)
