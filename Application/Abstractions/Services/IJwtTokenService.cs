@@ -11,6 +11,5 @@ namespace Application.Abstractions.Services
     {
         string GenerateToken(Guid userId, string email, int roleId);
         string GenerateRefreshToken();
-        ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
     }
 }

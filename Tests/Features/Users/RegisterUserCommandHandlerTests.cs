@@ -17,14 +17,10 @@ namespace Tests.Features.Users
             var userRepo = new Mock<IUserRepository>();
             var roleRepo = new Mock<IRoleRepository>();
             var passwordHasher = new Mock<IPasswordHasher>();
-            var auditService = new Mock<IAuditService>();
-            var logger = new Mock<ILogger<RegisterUserCommandHandler>>();
             var handler = new RegisterUserCommandHandler(
                 userRepo.Object,
                 roleRepo.Object,
-                passwordHasher.Object,
-                auditService.Object,
-                logger.Object);
+                passwordHasher.Object);
 
             var command = new RegisterUserCommand(
                 new RegisterUserRequest("Test User", "test@example.com", "password", 1));
@@ -44,14 +40,10 @@ namespace Tests.Features.Users
             var userRepo = new Mock<IUserRepository>();
             var roleRepo = new Mock<IRoleRepository>();
             var passwordHasher = new Mock<IPasswordHasher>();
-            var auditService = new Mock<IAuditService>();
-            var logger = new Mock<ILogger<RegisterUserCommandHandler>>();
             var handler = new RegisterUserCommandHandler(
                 userRepo.Object,
                 roleRepo.Object,
-                passwordHasher.Object,
-                auditService.Object,
-                logger.Object);
+                passwordHasher.Object);
 
             var command = new RegisterUserCommand(
                 new RegisterUserRequest("Test User", "test@example.com", "password", 1));
@@ -74,14 +66,10 @@ namespace Tests.Features.Users
             var userRepo = new Mock<IUserRepository>();
             var roleRepo = new Mock<IRoleRepository>();
             var passwordHasher = new Mock<IPasswordHasher>();
-            var auditService = new Mock<IAuditService>();
-            var logger = new Mock<ILogger<RegisterUserCommandHandler>>();
             var handler = new RegisterUserCommandHandler(
                 userRepo.Object,
                 roleRepo.Object,
-                passwordHasher.Object,
-                auditService.Object,
-                logger.Object);
+                passwordHasher.Object);
 
             var command = new RegisterUserCommand(
                 new RegisterUserRequest("Test User", "test@example.com", "password", 1));
@@ -96,15 +84,6 @@ namespace Tests.Features.Users
 
             userRepo.Setup(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
 
-            auditService.Setup(
-                x => x.RecordAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
-
             var result = await handler.Handle(command);
 
             Assert.True(result.IsSuccess);
@@ -114,14 +93,6 @@ namespace Tests.Features.Users
             Assert.Equal("User", result.Data.Role);
 
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>(), It.IsAny<CancellationToken>()), Times.Once);
-            auditService.Verify(
-                x => x.RecordAsync(
-                    "RegisterUser",
-                    "User",
-                    It.IsAny<string>(),
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>()),
-                Times.Once);
         }
     }
 }
